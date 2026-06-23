@@ -8,16 +8,14 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 public class Money {
 
-    private int amountInPaise;
+    private int amountUnits;
     private String currency;
 
     public Money(int amount, String currency) {
-        this.amountInPaise = amount;
+        this.amountUnits = amount;
         this.currency = currency;
     }
 
@@ -34,13 +32,13 @@ public class Money {
         if (!this.currency.equals(other.currency)) {
             throw new IllegalArgumentException("Cannot add money with different currencies");
         }
-        return new Money(this.amountInPaise + other.amountInPaise, this.currency);
+        return new Money(this.amountUnits + other.amountUnits, this.currency);
     }
 
     public Money subtract(Money other) {
         if (!this.currency.equals(other.currency)) {
             throw new IllegalArgumentException("Cannot subtract money with different currencies");
         }
-        return new Money(this.amountInPaise - other.amountInPaise, this.currency);
+        return new Money(this.amountUnits - other.amountUnits, this.currency);
     }
 }

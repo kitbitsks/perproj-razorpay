@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "order_record")
-@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -38,7 +37,6 @@ public class OrderRecord {
     private OrderStatus orderStatus = OrderStatus.CREATED;
 
     @Column(nullable = false)
-    @Builder.Default
     private Integer attempts = 0;
 
     @JdbcTypeCode(SqlTypes.JSON)
