@@ -1,9 +1,14 @@
 package com.perproj.razorpay.merchant.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.UUID;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MerchantWebHookConfig {
 
     @Id

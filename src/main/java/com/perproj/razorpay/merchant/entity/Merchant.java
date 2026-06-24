@@ -1,10 +1,8 @@
 package com.perproj.razorpay.merchant.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.UUID;
 import com.perproj.razorpay.common.enums.BusinessType;
 import com.perproj.razorpay.common.enums.MerchantStatus;
@@ -15,6 +13,7 @@ import com.perproj.razorpay.common.enums.MerchantStatus;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Merchant {
 
     @Id
@@ -42,7 +41,7 @@ public class Merchant {
 
     @Column(length = 20, nullable = false)
 //    @Enumerated(EnumType.STRING)
-    private MerchantStatus merchantStatus;
+    private MerchantStatus status;
 
     @Column(length = 20)
     private String gstId;
