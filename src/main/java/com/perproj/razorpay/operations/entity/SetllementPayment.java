@@ -1,8 +1,6 @@
 package com.perproj.razorpay.operations.entity;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
@@ -12,4 +10,9 @@ public class SetllementPayment {
 
     @EmbeddedId
     private SettlementPaymentId id;
+
+    @MapsId
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "settlement_id", nullable = false)
+    private Settlement settlement;
 }
