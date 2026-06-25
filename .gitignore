@@ -1,0 +1,86 @@
+# ==========================
+# Build
+# ==========================
+target/
+build/
+out/
+
+# ==========================
+# Logs
+# ==========================
+*.log
+logs/
+
+# ==========================
+# IntelliJ IDEA
+# ==========================
+.idea/
+*.iml
+
+# ==========================
+# Eclipse
+# ==========================
+.project
+.classpath
+.settings/
+.factorypath
+
+# ==========================
+# VS Code
+# ==========================
+.vscode/
+
+# ==========================
+# NetBeans
+# ==========================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ==========================
+# Maven
+# ==========================
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ==========================
+# Gradle
+# ==========================
+.gradle/
+
+# ==========================
+# OS Files
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Environment
+# ==========================
+.env
+.env.*
+!.env.example
+
+# ==========================
+# Spring Boot
+# ==========================
+application-local.yml
+application-local.yaml
+application-local.properties
+
+# ==========================
+# Generated Files
+# ==========================
+*.class
+*.jar
+*.war
+*.ear
+
+# ==========================
+# Temporary Files
+# ==========================
+*.swp
+*.swo
+*~

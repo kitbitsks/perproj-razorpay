@@ -2,6 +2,7 @@ package com.perproj.razorpay.merchant.service.impl;
 
 import com.perproj.razorpay.common.enums.MerchantStatus;
 import com.perproj.razorpay.common.enums.UserRole;
+import com.perproj.razorpay.common.exception.DuplicateResourceException;
 import com.perproj.razorpay.merchant.dto.request.MerchantSignupRequest;
 import com.perproj.razorpay.merchant.dto.response.MerchantResponse;
 import com.perproj.razorpay.merchant.entity.AppUser;
@@ -24,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public MerchantResponse signup(MerchantSignupRequest request) {
         if (merchantRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Merchant with email already exists: " + request.email());
+            throw new DuplicateResourceException("DUPLICATE_EMAIL", "Email already exists");
         }
 
         Merchant merchant = Merchant.builder()
