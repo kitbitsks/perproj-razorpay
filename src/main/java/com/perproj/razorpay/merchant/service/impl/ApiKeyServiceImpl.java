@@ -1,6 +1,6 @@
 package com.perproj.razorpay.merchant.service.impl;
 
-import com.perproj.razorpay.merchant.mapper.ApiKeyMapper;
+import com.perproj.razorpay.merchant.dto.response.ApiKeyResponse;
 import com.perproj.razorpay.common.exception.ResourceNotFoundException;
 import com.perproj.razorpay.common.util.RandomizerUtil;
 import com.perproj.razorpay.merchant.dto.request.CreateApiKeyRequest;
@@ -25,7 +25,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
     private final ApiKeyRepository apiKeyRepository;
 
-    private final ApiKeyMapper apiKeyMapper;
+//    private final ApiKeyMapper apiKeyMapper;
 
     @Override
     public CreateApiKeyResponse create(UUID merchantId, CreateApiKeyRequest apiKeyRequest) {
@@ -49,7 +49,12 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     }
 
     @Override
-    public List<CreateApiKeyResponse> listOfApiKeys(UUID merchantId) {
-        return apiKeyMapper.toResponse(apiKeyRepository.findByMerchant_Id(merchantId));
+    public List<ApiKeyResponse> listOfApiKeys(UUID merchantId) {
+        List<ApiKey> apiKey = apiKeyRepository.findByMerchant_Id(merchantId);
+        List<ApiKeyResponse> apiKeyResponse = apiKey.stream().map(
+                apiKey1 ->
+                    new ApiKeyResponse(apiKey1.getId(), apiKey1.getKeyId(), apiKey1.getEnvironment(), apiKey1.isEnabled(), apiKey1.getLastUsedAt(), apiKey1.getCreatedAt())
+                ).toList();
+        return apiKeyResponse;
     }
 }

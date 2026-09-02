@@ -1,6 +1,7 @@
 package com.perproj.razorpay.merchant.controller;
 
 import com.perproj.razorpay.merchant.dto.request.CreateApiKeyRequest;
+import com.perproj.razorpay.merchant.dto.response.ApiKeyResponse;
 import com.perproj.razorpay.merchant.dto.response.CreateApiKeyResponse;
 import com.perproj.razorpay.merchant.service.ApiKeyService;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class ApiKeyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CreateApiKeyResponse>> listOfApiKey(@PathVariable("merchantId") UUID merchantId){
+    public ResponseEntity<List<ApiKeyResponse>> listOfApiKey(@PathVariable("merchantId") UUID merchantId){
         return ResponseEntity.ok().body(apiKeyService.listOfApiKeys(merchantId));
     }
 }
