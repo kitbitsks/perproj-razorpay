@@ -7,6 +7,7 @@ import com.perproj.razorpay.merchant.dto.request.MerchantSignupRequest;
 import com.perproj.razorpay.merchant.dto.response.MerchantResponse;
 import com.perproj.razorpay.merchant.entity.AppUser;
 import com.perproj.razorpay.merchant.entity.Merchant;
+import com.perproj.razorpay.merchant.mapper.MerchantMapper;
 import com.perproj.razorpay.merchant.repository.AppUserRepository;
 import com.perproj.razorpay.merchant.repository.MerchantRepository;
 import com.perproj.razorpay.merchant.service.AuthService;
@@ -21,6 +22,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final AppUserRepository appUserRepository;
     private final MerchantRepository merchantRepository;
+    private final MerchantMapper merchantMapper;
 
     @Override
     public MerchantResponse signup(MerchantSignupRequest request) {
@@ -28,13 +30,8 @@ public class AuthServiceImpl implements AuthService {
             throw new DuplicateResourceException("DUPLICATE_EMAIL", "Email already exists");
         }
 
-        Merchant merchant = Merchant.builder()
-                .businessName(request.businessName())
-                .businessType(request.businessType())
-                .name(request.name())
-                .email(request.email())
-                .status(MerchantStatus.PENDING_KYC)
-                .build();
+        Merchant merchant = merchantMapper.toEntityFromSignUpRequest(request);
+        merchant.setStatus(MerchantStatus.PENDING_KYC);
 
         merchant = merchantRepository.save(merchant);
 
@@ -47,12 +44,8 @@ public class AuthServiceImpl implements AuthService {
                         .build();
         appUserRepository.save(appUser);
 
-        return new MerchantResponse(merchant.getId(),
-                merchant.getName(),
-                merchant.getEmail(),
-                merchant.getBusinessName(),
-                merchant.getBusinessType(), merchant.getStatus()
-        );
+        return merchantMapper.toResponse(merchant);
+
     }
 
 }

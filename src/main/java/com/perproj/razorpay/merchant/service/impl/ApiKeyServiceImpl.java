@@ -7,6 +7,7 @@ import com.perproj.razorpay.merchant.dto.request.CreateApiKeyRequest;
 import com.perproj.razorpay.merchant.dto.response.CreateApiKeyResponse;
 import com.perproj.razorpay.merchant.entity.ApiKey;
 import com.perproj.razorpay.merchant.entity.Merchant;
+import com.perproj.razorpay.merchant.mapper.ApiKeyMapper;
 import com.perproj.razorpay.merchant.repository.ApiKeyRepository;
 import com.perproj.razorpay.merchant.repository.MerchantRepository;
 import com.perproj.razorpay.merchant.service.ApiKeyService;
@@ -28,7 +29,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
     private final ApiKeyRepository apiKeyRepository;
 
-//    private final ApiKeyMapper apiKeyMapper;
+    private final ApiKeyMapper apiKeyMapper;
 
     @Override
     public CreateApiKeyResponse create(UUID merchantId, CreateApiKeyRequest apiKeyRequest) {
@@ -48,17 +49,12 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
         apiKey =  apiKeyRepository.save(apiKey);
 
-        return new CreateApiKeyResponse(apiKey.getId(), apiKey.getKeyId(), apiKey.getKeySecretHash(), apiKey.getEnvironment());
+        return apiKeyMapper.toCreateResponse(apiKey);
     }
 
     @Override
     public List<ApiKeyResponse> listOfApiKeys(UUID merchantId) {
-        List<ApiKey> apiKey = apiKeyRepository.findByMerchant_Id(merchantId);
-        List<ApiKeyResponse> apiKeyResponse = apiKey.stream().map(
-                apiKey1 ->
-                    new ApiKeyResponse(apiKey1.getId(), apiKey1.getKeyId(), apiKey1.getEnvironment(), apiKey1.isEnabled(), apiKey1.getLastUsedAt(), apiKey1.getRotatedAt())
-                ).toList();
-        return apiKeyResponse;
+        return apiKeyMapper.toResponseList(apiKeyRepository.findByMerchant_Id(merchantId));
     }
 
     @Override
@@ -92,6 +88,6 @@ public class ApiKeyServiceImpl implements ApiKeyService {
        key.setGracePeriodExpiresAt(LocalDateTime.now().plusHours(24));
 
        key = apiKeyRepository.save(key);
-       return new CreateApiKeyResponse(key.getId(),key.getKeyId(),key.getKeySecretHash(),key.getEnvironment());
+       return apiKeyMapper.toCreateResponse(key);
     }
 }
