@@ -12,7 +12,10 @@ import com.perproj.razorpay.merchant.repository.MerchantRepository;
 import com.perproj.razorpay.merchant.service.ApiKeyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +33,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     @Override
     public CreateApiKeyResponse create(UUID merchantId, CreateApiKeyRequest apiKeyRequest) {
         Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(()-> new ResourceNotFoundException(merchantId, "merchant"));
+                .orElseThrow(()-> new ResourceNotFoundException("merchant", merchantId));
 
        //need to create secret key and secret hash
         String keyId = "rzp_"+apiKeyRequest.environment()+"_"+ RandomizerUtil.randomBase64(24);
@@ -53,8 +56,42 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         List<ApiKey> apiKey = apiKeyRepository.findByMerchant_Id(merchantId);
         List<ApiKeyResponse> apiKeyResponse = apiKey.stream().map(
                 apiKey1 ->
-                    new ApiKeyResponse(apiKey1.getId(), apiKey1.getKeyId(), apiKey1.getEnvironment(), apiKey1.isEnabled(), apiKey1.getLastUsedAt(), apiKey1.getCreatedAt())
+                    new ApiKeyResponse(apiKey1.getId(), apiKey1.getKeyId(), apiKey1.getEnvironment(), apiKey1.isEnabled(), apiKey1.getLastUsedAt(), apiKey1.getRotatedAt())
                 ).toList();
         return apiKeyResponse;
+    }
+
+    @Override
+    @Transactional
+    public void revoke(UUID keyId, UUID merchantId) {
+        ApiKey key = apiKeyRepository.findById(keyId)
+                .filter(
+                        apiKey -> apiKey.getMerchant().getId().equals(merchantId)
+                )
+                .orElseThrow(()->new ResourceNotFoundException("ApiKey",keyId));
+        key.setEnabled(false);
+
+    }
+
+    @Override
+    public CreateApiKeyResponse rotate(UUID keyId, UUID merchantId) {
+       ApiKey key = apiKeyRepository.findById(keyId)
+               .filter(
+                       apiKey -> apiKey.getMerchant().getId().equals(merchantId)
+               )
+               .orElseThrow(() -> new ResourceNotFoundException("ApiKey", keyId));
+
+       if(!key.isEnabled()){
+           throw new RuntimeException("Cannot rotate disabled key");
+       }
+
+       String newRawSecret = RandomizerUtil.randomBase64(24);
+       key.setPreviousKeySecretHash(key.getKeySecretHash());
+       key.setKeySecretHash(newRawSecret);
+       key.setRotatedAt(LocalDateTime.now());
+       key.setGracePeriodExpiresAt(LocalDateTime.now().plusHours(24));
+
+       key = apiKeyRepository.save(key);
+       return new CreateApiKeyResponse(key.getId(),key.getKeyId(),key.getKeySecretHash(),key.getEnvironment());
     }
 }

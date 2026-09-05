@@ -30,15 +30,19 @@ public class ApiKey {
     @Column(nullable = false, length = 100)
     private String keySecretHash;
 
+    @Column(length = 200)
+    private String previousKeySecretHash;
+
     @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     private Environment environment;
 
     @Column(nullable = false)
-    boolean enabled;
+    @Builder.Default
+    private boolean enabled = true;
 
     LocalDateTime lastUsedAt;
-    LocalDateTime createdAt;
+    LocalDateTime rotatedAt;
     LocalDateTime gracePeriodExpiresAt;
 
 
