@@ -8,8 +8,11 @@ import com.perproj.razorpay.payment.dto.request.CreateOrderRequest;
 import com.perproj.razorpay.payment.dto.response.OrderResponse;
 import com.perproj.razorpay.payment.dto.response.PaymentResponse;
 import com.perproj.razorpay.payment.entity.OrderRecord;
+import com.perproj.razorpay.payment.entity.Payment;
 import com.perproj.razorpay.payment.mapper.OrderMapper;
+import com.perproj.razorpay.payment.mapper.PaymentMapper;
 import com.perproj.razorpay.payment.repository.OrderRepository;
+import com.perproj.razorpay.payment.repository.PaymentRepository;
 import com.perproj.razorpay.payment.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,8 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderRepository orderRepository;
     private OrderMapper orderMapper;
+    private PaymentRepository paymentRepository;
+    private PaymentMapper paymentMapper;
 
 
     @Override
@@ -74,6 +79,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<PaymentResponse> listPayment(UUID merchantId, UUID orderId) {
-        return List.of();
+        OrderRecord order = orderRepository.findByIdAndMerchantId(orderId,merchantId)
+                .orElseThrow(()-> new ResourceNotFoundException("Order", orderId));
+
+        List<Payment> payments = paymentRepository.findByOrder_Id(order);
+        return paymentMapper.toResponse(payments);
     }
 }

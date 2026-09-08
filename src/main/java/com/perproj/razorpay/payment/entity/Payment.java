@@ -11,7 +11,10 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payment", indexes = {
+        @Index(name = "idx_payment_order_id", columnList = "order_id"),
+        @Index(name = "idx_payment_merchant_id", columnList = "merchant_id")
+})
 public class Payment {
 
     @Id
@@ -20,7 +23,7 @@ public class Payment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional =false)
     @JoinColumn(name = "order_id", nullable = false)
-    private OrderRecord orderRecord;
+    private OrderRecord order;
 
     @Column(nullable = false)
     private UUID merchantId;

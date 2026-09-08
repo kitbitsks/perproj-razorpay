@@ -8,7 +8,9 @@ import com.perproj.razorpay.common.enums.BusinessType;
 import com.perproj.razorpay.common.enums.MerchantStatus;
 
 @Entity
-@Table(name = "merchants")
+@Table(name = "merchant", indexes = {
+        @Index(name = "idx_merchant_status", columnList = "status")
+})
 @Getter
 @Setter
 @NoArgsConstructor
