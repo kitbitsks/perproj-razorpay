@@ -31,7 +31,7 @@ public class OrderRecord {
     private UUID merchantId;
 
     @Embedded
-    private Money money;
+    private Money amount;
 
     @Column(length = 100)
     private String receipt;
