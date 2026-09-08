@@ -57,6 +57,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         paymentTransitionService.apply(payment , PaymentEvent.AUTHORIZE_ATTEMPT);
 
+
+
         return null;
     }
 }

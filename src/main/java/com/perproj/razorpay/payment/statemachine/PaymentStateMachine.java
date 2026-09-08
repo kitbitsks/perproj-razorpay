@@ -3,9 +3,15 @@ package com.perproj.razorpay.payment.statemachine;
 import com.perproj.razorpay.common.enums.PaymentEvent;
 import com.perproj.razorpay.common.enums.PaymentStatus;
 import com.perproj.razorpay.common.exception.InvalidStateTransitionException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
+@Slf4j
+@RequiredArgsConstructor
 public class PaymentStateMachine {
 
     private record Transition(PaymentStatus from , PaymentEvent event){};

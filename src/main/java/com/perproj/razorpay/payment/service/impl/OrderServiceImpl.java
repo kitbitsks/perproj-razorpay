@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
         OrderRecord order = OrderRecord.builder()
                 .orderStatus(OrderStatus.CREATED)
                 .notes(orderRequest.notes())
-                .money(orderRequest.amount())
+                .amount(orderRequest.amount())
                 .merchantId(merchantId)
                 .receipt(orderRequest.receipt())
                 .expiresAt(orderRequest.expiresAt() != null ? orderRequest.expiresAt() :
