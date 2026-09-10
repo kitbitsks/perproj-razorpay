@@ -1,4 +1,14 @@
 package com.perproj.razorpay.vault.dto.response;
 
-public record TokenizeResponse() {
+import com.perproj.razorpay.common.enums.CardBrand;
+
+public record TokenizeResponse(
+
+        String token,
+        String lastFour,
+        CardBrand brand,
+        Integer expiryMonth,
+        Integer expiryYear
+
+) {
 }
