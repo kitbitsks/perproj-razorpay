@@ -1,8 +1,12 @@
 package com.perproj.razorpay.merchant.entity;
 
+import com.perproj.razorpay.common.entity.BaseEntity;
 import com.perproj.razorpay.common.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.UUID;
 
@@ -17,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AppUser {
+public class AppUser  extends BaseEntity implements UserDetailsService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
