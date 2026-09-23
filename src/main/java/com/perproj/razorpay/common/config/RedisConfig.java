@@ -10,6 +10,6 @@ public class RedisConfig {
 
     @Bean
     StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory){
-        return new StringRedisTemplate();
+        return new StringRedisTemplate(redisConnectionFactory);
     }
 }

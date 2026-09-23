@@ -7,6 +7,9 @@ import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
 @Configuration
 public class AesEncryptionConfig {
 

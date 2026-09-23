@@ -17,7 +17,7 @@ public class RedisApiKeyCache implements ApiKeyCache{
     private static final String PREFIX = "apikey:";
     private static final Duration TTL = Duration.ofMinutes(5);
 
-    private StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
 
     @Override
