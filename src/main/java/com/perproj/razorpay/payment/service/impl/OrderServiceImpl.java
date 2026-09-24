@@ -1,5 +1,6 @@
 package com.perproj.razorpay.payment.service.impl;
 
+import com.perproj.razorpay.common.enums.EventAggregateType;
 import com.perproj.razorpay.common.enums.OrderStatus;
 import com.perproj.razorpay.common.exception.BusinessRuleViolationException;
 import com.perproj.razorpay.common.exception.DuplicateResourceException;
@@ -11,15 +12,18 @@ import com.perproj.razorpay.payment.entity.OrderRecord;
 import com.perproj.razorpay.payment.entity.Payment;
 import com.perproj.razorpay.payment.mapper.OrderMapper;
 import com.perproj.razorpay.payment.mapper.PaymentMapper;
+import com.perproj.razorpay.payment.outbox.OutboxEventPublisher;
 import com.perproj.razorpay.payment.repository.OrderRepository;
 import com.perproj.razorpay.payment.repository.PaymentRepository;
 import com.perproj.razorpay.payment.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -31,9 +35,11 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     private PaymentRepository paymentRepository;
     private PaymentMapper paymentMapper;
+    private OutboxEventPublisher eventPublisher;
 
 
     @Override
+    @Transactional
     public OrderResponse create(UUID merchantId, CreateOrderRequest orderRequest) {
         if(orderRequest.receipt() !=null && orderRepository.existsByMerchantIdAndReceipt(merchantId,orderRequest.receipt())){
             throw new DuplicateResourceException("DUPLICATE_RESOURCE","Order with given recieptId already exists");
@@ -51,6 +57,14 @@ public class OrderServiceImpl implements OrderService {
 
         order = orderRepository.save(order);
         //TODO : send kafka event
+        eventPublisher.publish(EventAggregateType.ORDER, order.getId(), "ORDER_CREATED",
+                Map.of("orderId", order.getId(),
+                        "merchantId", merchantId.toString(),
+                        "orderStatus", order.getOrderStatus().name(),
+                        "amountUnits", order.getAmount().getAmountUnits(),
+                        "amountCurrency", order.getAmount().getCurrency()
+                )
+        );
         return orderMapper.toResponse(order);
     }
 
@@ -64,6 +78,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponse cancel(UUID merchantId, UUID orderId) {
         OrderRecord order = orderRepository.findByIdAndMerchantId(orderId,merchantId)
                 .orElseThrow(()-> new ResourceNotFoundException("Order", orderId));
@@ -74,6 +89,15 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+
+        eventPublisher.publish(EventAggregateType.ORDER, order.getId(), "ORDER_CANCELLED",
+                Map.of("orderId", order.getId(),
+                        "merchantId", merchantId.toString(),
+                        "orderStatus", order.getOrderStatus().name(),
+                        "amountUnits", order.getAmount().getAmountUnits(),
+                        "amountCurrency", order.getAmount().getCurrency()
+                )
+        );
         return orderMapper.toResponse(order);
     }
 
