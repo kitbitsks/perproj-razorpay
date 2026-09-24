@@ -42,7 +42,7 @@ public class OutboxEvent extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(nullable = false)
-    private OutboxStatus outboxStatus = OutboxStatus.PENDING;
+    private OutboxStatus status = OutboxStatus.PENDING;
 
 
     @Builder.Default
